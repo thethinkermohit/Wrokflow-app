@@ -73,7 +73,7 @@ export class WorkflowTrackerAPI {
     // Use server backend
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...(options.headers as Record<string, string> || {}),
     };
 
     const token = this.getSessionToken();
@@ -91,7 +91,7 @@ export class WorkflowTrackerAPI {
       });
     } catch (fetchError) {
       console.log('Network error during request:', fetchError);
-      throw new Error(`Network error: ${fetchError.message}`);
+      throw new Error(`Network error: ${fetchError instanceof Error ? fetchError.message : String(fetchError)}`);
     }
 
     // Check if response is actually JSON

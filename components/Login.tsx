@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+// import { Button } from "./ui/button";
+// import { Input } from "./ui/input";
+// import { Label } from "./ui/label";
+// import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { AlertCircle, Lock, User, Wifi } from "lucide-react";
-import { Alert, AlertDescription } from "./ui/alert";
+// import { Alert, AlertDescription } from "./ui/alert";
 import { apiClient } from "../utils/supabase/client";
 
 interface LoginProps {

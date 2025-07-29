@@ -1,4 +1,4 @@
-import { Progress } from "./ui/progress";
+// import { Progress } from "./ui/progress";
 import { Task } from "./constants/taskData";
 import { calculateStageProgress, isStageFullyCompleted } from "./utils/taskHelpers";
 

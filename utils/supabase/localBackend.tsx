@@ -224,7 +224,7 @@ export class LocalBackend {
     }
 
     // Get all progress data from localStorage
-    const allUsersProgress = [];
+    const allUsersProgress: any[] = [];
     
     // Check each user for progress data
     Object.values(this.INTERNAL_USERS).forEach(userInfo => {

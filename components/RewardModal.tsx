@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Trophy, Star, Sparkles, X, Gift, Crown, Zap } from "lucide-react";
 
 interface RewardModalProps {

@@ -1,4 +1,4 @@
-import { Checkbox } from "./ui/checkbox";
+// import { Checkbox } from "./ui/checkbox";
 import { Task } from "./constants/taskData";
 
 interface TaskCardProps {
@@ -74,7 +74,7 @@ export function TaskCard({ task, stageKey, onToggleCheckbox, isUnlocked }: TaskC
       
       {/* Enhanced Checkbox Grid */}
       <div className="grid grid-cols-4 gap-3 mb-4">
-        {stageCheckboxes.map((checkbox, index) => (
+        {stageCheckboxes.map((checkbox) => (
           <div 
             key={checkbox.id} 
             className="relative flex items-center justify-center group/checkbox"

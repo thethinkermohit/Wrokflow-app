@@ -27,7 +27,7 @@ export function AdminDashboard() {
   const [usersProgress, setUsersProgress] = useState<UserProgress[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedUser, setSelectedUser] = useState<UserProgress | null>(null);
+  // const [selectedUser, setSelectedUser] = useState<UserProgress | null>(null);
 
   const loadUsersProgress = async () => {
     try {

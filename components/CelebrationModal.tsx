@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Trophy, Star, Sparkles, X } from "lucide-react";
 
 interface CelebrationModalProps {
@@ -37,7 +37,7 @@ export function CelebrationModal({ isOpen, onClose, stage }: CelebrationModalPro
     >
       {/* Enhanced Medical-themed Confetti */}
       {confettiPieces.map((piece) => {
-        const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+        // const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
         const shapes = ['🎉', '✨', '🌟', '💙', '🏆'];
         return (
           <motion.div
