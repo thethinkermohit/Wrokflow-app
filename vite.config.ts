@@ -17,7 +17,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          utils: ['lucide-react', 'motion', 'html2canvas', 'jspdf'],
+          utils: ['lucide-react', 'framer-motion', 'html2canvas', 'jspdf'],
           supabase: ['@supabase/supabase-js']
         }
       }
@@ -32,6 +32,6 @@ export default defineConfig({
     global: 'globalThis',
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'lucide-react', 'motion']
+    include: ['react', 'react-dom', 'lucide-react', 'framer-motion']
   }
 })
