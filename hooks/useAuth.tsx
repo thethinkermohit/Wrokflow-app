@@ -14,7 +14,7 @@ interface UseAuthReturn {
   currentUser: User | null;
   isLoading: boolean;
   tasks: Task[];
-  setTasks: (tasks: Task[]) => void;
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
   handleLogin: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
   handleLogout: () => Promise<void>;
   loadUserProgress: () => Promise<void>;

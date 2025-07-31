@@ -37,7 +37,8 @@ export function Insights({ tasks, onBackClick }: InsightsProps) {
   const insights = hasRealData ? generateRealInsights(analytics, dailyData) : [];
   const totalTasks = hasRealData ? analytics.completedCheckboxes : 0;
   const avgDaily = hasRealData ? (analytics.dailyData.length > 0 ? Math.round(analytics.completedCheckboxes / (analytics.insights?.totalWorkingDays || 1)) : 0) : 0;
-  const _bestDay = hasRealData ? (analytics.insights?.mostProductiveDay ? { day: new Date(analytics.insights.mostProductiveDay).getDate(), tasks: Math.max(...dailyData.map(d => d.completed)) } : { tasks: 0 }) : { tasks: 0 };
+  // Calculate best day for potential future use
+  // const bestDay = hasRealData ? (analytics.insights?.mostProductiveDay ? { day: new Date(analytics.insights.mostProductiveDay).getDate(), tasks: Math.max(...dailyData.map(d => d.completed)) } : { tasks: 0 }) : { tasks: 0 };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30 p-4 pb-20">

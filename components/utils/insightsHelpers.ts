@@ -1,4 +1,4 @@
-import type { Task, TaskAnalytics, DailyCompletionData } from '../constants/taskData';
+import type { TaskAnalytics, DailyCompletionData } from '../constants/taskData';
 
 // Generate mock data for July 2025 daily task completion
 export const generateJulyData = () => {

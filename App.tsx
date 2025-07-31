@@ -12,7 +12,6 @@ import { AppHeader } from "./components/AppHeader";
 import { useAuth } from "./hooks/useAuth";
 import { useAutoSave } from "./hooks/useAutoSave";
 import { handleExportAndRefresh } from "./utils/pdfExport";
-import { INITIAL_TASKS } from "./components/constants/taskData";
 import { apiClient } from "./utils/supabase/client";
 
 export default function App() {
