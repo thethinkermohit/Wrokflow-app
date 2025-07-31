@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { INITIAL_TASKS, Task } from "../components/constants/taskData";
 import { apiClient } from "../utils/supabase/client";
 
+console.log('🔍 useAuth importing apiClient:', apiClient);
+console.log('🔍 useAuth apiClient type:', typeof apiClient);
+
 interface User {
   id: string;
   username: string;
@@ -33,6 +36,11 @@ export function useAuth(): UseAuthReturn {
 
   const checkAuthStatus = async () => {
     try {
+      if (!apiClient || typeof apiClient.getSessionToken !== 'function') {
+        console.error('❌ API Client is not properly initialized');
+        throw new Error('API Client is not properly initialized');
+      }
+      
       const sessionToken = apiClient.getSessionToken();
 
       if (sessionToken) {

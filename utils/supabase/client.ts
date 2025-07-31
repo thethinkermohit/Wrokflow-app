@@ -267,5 +267,11 @@ export class WorkflowTrackerAPI {
   }
 }
 
-// Export singleton instance
-export const apiClient = new WorkflowTrackerAPI();
+// Create and export singleton instance
+console.log('🔧 Creating WorkflowTrackerAPI instance...');
+const workflowAPI = new WorkflowTrackerAPI();
+console.log('🔧 WorkflowTrackerAPI instance created:', workflowAPI);
+console.log('🔧 Has getSessionToken method:', typeof workflowAPI.getSessionToken);
+
+export const apiClient = workflowAPI;
+console.log('🔧 Exported apiClient:', apiClient);
