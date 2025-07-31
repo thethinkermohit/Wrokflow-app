@@ -128,6 +128,31 @@
     @apply -translate-y-0.5 shadow-xl;
   }
   
+  /* Current Stage Card - Eye-catching gradient */
+  .current-stage-card {
+    @apply bg-gradient-to-br from-blue-50 via-purple-50/80 to-blue-50 backdrop-blur-md border border-blue-200/40 shadow-xl rounded-2xl transition-all duration-300 relative;
+    background-image: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(168, 85, 247, 0.06) 50%, rgba(59, 130, 246, 0.08) 100%);
+    box-shadow: 
+      0 10px 25px -5px rgba(59, 130, 246, 0.1),
+      0 10px 10px -5px rgba(168, 85, 247, 0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+  
+  .current-stage-card::before {
+    content: '';
+    @apply absolute inset-0 rounded-2xl;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(168, 85, 247, 0.03) 50%, rgba(59, 130, 246, 0.02) 100%);
+    pointer-events: none;
+  }
+  
+  .current-stage-card:hover {
+    @apply -translate-y-1 shadow-2xl;
+    box-shadow: 
+      0 20px 35px -10px rgba(59, 130, 246, 0.15),
+      0 15px 20px -5px rgba(168, 85, 247, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+  
   /* 3D Progress Ring */
   .progress-ring {
     @apply relative w-32 h-32;
@@ -141,6 +166,101 @@
     mask: radial-gradient(circle at center, transparent 65%, black 65%);
     -webkit-mask: radial-gradient(circle at center, transparent 65%, black 65%);
     animation: progress-glow 2s ease-out;
+  }
+  
+  /* Completed Task Card - Green Tint */
+  .completed-card-tint {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(22, 163, 74, 0.05) 50%, rgba(34, 197, 94, 0.08) 100%) !important;
+    border-color: rgba(34, 197, 94, 0.3) !important;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.1), 0 2px 6px rgba(34, 197, 94, 0.05) !important;
+  }
+  
+  .completed-card-tint:hover {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.12) 0%, rgba(22, 163, 74, 0.08) 50%, rgba(34, 197, 94, 0.12) 100%) !important;
+    box-shadow: 0 6px 16px rgba(34, 197, 94, 0.15), 0 4px 8px rgba(34, 197, 94, 0.08) !important;
+    transform: translateY(-2px) scale(1.01) !important;
+  }
+
+  /* Enhanced Larger Dual Progress Ring */
+  .progress-ring-large {
+    @apply relative w-36 h-36;
+    transform-style: preserve-3d;
+  }
+  
+  .progress-ring-large::before {
+    content: '';
+    @apply absolute inset-0 rounded-full;
+    background: radial-gradient(circle at center, 
+      rgba(59, 130, 246, 0.05) 0%, 
+      rgba(255, 255, 255, 0.8) 40%, 
+      rgba(75, 85, 99, 0.1) 60%,
+      transparent 80%);
+    animation: dual-ring-glow 3s ease-in-out infinite alternate;
+  }
+  
+  .progress-ring-large::after {
+    content: '';
+    @apply absolute inset-3 rounded-full;
+    background: radial-gradient(circle at center, 
+      rgba(255, 255, 255, 0.9) 0%, 
+      rgba(255, 255, 255, 0.6) 50%, 
+      transparent 70%);
+    pointer-events: none;
+  }
+  
+  /* Clean Dual Progress Ring - Enhanced Readability */
+  .progress-ring-clean {
+    @apply relative w-40 h-40;
+    transform-style: preserve-3d;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+  }
+  
+  .progress-ring-clean::before {
+    content: '';
+    @apply absolute inset-0 rounded-full;
+    background: radial-gradient(circle at center, 
+      rgba(255, 255, 255, 0.95) 0%, 
+      rgba(248, 250, 252, 0.9) 40%, 
+      rgba(241, 245, 249, 0.8) 70%,
+      transparent 85%);
+    animation: clean-ring-glow 4s ease-in-out infinite alternate;
+  }
+  
+  .progress-ring-clean::after {
+    content: '';
+    @apply absolute inset-4 rounded-full;
+    background: radial-gradient(circle at center, 
+      rgba(255, 255, 255, 0.9) 0%, 
+      rgba(255, 255, 255, 0.5) 60%, 
+      transparent 75%);
+    pointer-events: none;
+    border: 1px solid rgba(226, 232, 240, 0.3);
+    border-radius: 50%;
+  }
+  
+  /* Elegant Progress Ring */
+  .progress-ring-elegant {
+    @apply relative;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.06));
+  }
+  
+  /* Large Progress Ring for Redesigned Layout */
+  .progress-ring-large {
+    @apply relative;
+    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.08));
+  }
+  
+  /* Center Display Enhancement */
+  .progress-center-display {
+    @apply relative;
+    z-index: 1000;
+  }
+  
+  .progress-center-display::before {
+    content: '';
+    @apply absolute inset-0 bg-white rounded-full;
+    z-index: -1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.1);
   }
   
   /* Gradient Button */
@@ -177,18 +297,101 @@
     animation-delay: 0.3s;
   }
   
-  /* Refined Medical Checkbox */
+  /* Stage-Specific Medical Checkboxes */
   .medical-checkbox {
     @apply relative w-6 h-6 border-2 border-blue-500 rounded-md bg-slate-50 cursor-pointer transition-all duration-300;
   }
   
-  .medical-checkbox:checked {
+  .medical-checkbox[data-checked="true"] {
     @apply bg-green-500 border-green-500 scale-105;
   }
   
-  .medical-checkbox:checked::after {
+  .medical-checkbox[data-checked="true"]::after {
     content: '✓';
     @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white font-bold;
+  }
+  
+  /* Stage 2 - Circle Checkboxes */
+  .medical-checkbox-circle {
+    @apply relative w-6 h-6 border-2 border-blue-500 rounded-full bg-slate-50 cursor-pointer transition-all duration-300;
+  }
+  
+  .medical-checkbox-circle[data-checked="true"] {
+    @apply bg-green-500 border-green-500 scale-105;
+  }
+  
+  .medical-checkbox-circle[data-checked="true"]::after {
+    content: '✓';
+    @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white font-bold text-xs;
+  }
+  
+  /* Stage 3 - Diamond Checkboxes */
+  .medical-checkbox-diamond {
+    @apply relative cursor-pointer transition-all duration-300;
+    width: 28px;
+    height: 28px;
+    background: #e2e8f0;
+    border: none;
+    clip-path: polygon(50% 8%, 92% 50%, 50% 92%, 8% 50%);
+    transform: rotate(0deg);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .medical-checkbox-diamond:hover {
+    background: #cbd5e1;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  }
+  
+  .medical-checkbox-diamond[data-checked="true"] {
+    @apply scale-105;
+    background: #22c55e;
+    box-shadow: 0 3px 8px rgba(34, 197, 94, 0.3);
+  }
+  
+  .medical-checkbox-diamond[data-checked="true"]::after {
+    content: '✓';
+    @apply absolute text-white font-bold;
+    font-size: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  /* Stage 4 - Diamond Checkboxes */
+  .medical-checkbox-hexagon {
+    @apply relative cursor-pointer transition-all duration-300;
+    width: 28px;
+    height: 28px;
+    background: #e2e8f0;
+    border: none;
+    clip-path: polygon(50% 8%, 92% 50%, 50% 92%, 8% 50%);
+    transform: rotate(0deg);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .medical-checkbox-hexagon:hover {
+    background: #cbd5e1;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  }
+  
+  .medical-checkbox-hexagon[data-checked="true"] {
+    @apply scale-105;
+    background: #22c55e;
+    box-shadow: 0 3px 8px rgba(34, 197, 94, 0.3);
+  }
+  
+  .medical-checkbox-hexagon[data-checked="true"]::after {
+    content: '✓';
+    @apply absolute text-white font-bold;
+    font-size: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
   }
   
   /* Refined Stage Progress Indicator */
@@ -200,14 +403,31 @@
     @apply bg-blue-50/40 border-blue-500 shadow-md shadow-blue-500/20;
   }
   
-  .stage-indicator::before {
-    content: '';
-    @apply absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl bg-gradient-to-r from-blue-500 to-blue-600 opacity-0 transition-opacity duration-300;
+  .stage-indicator.completed {
+    @apply bg-green-50/40 border-green-400 shadow-md shadow-green-500/20;
   }
   
-  .stage-indicator.active::before {
-    @apply opacity-100;
+  .stage-indicator:hover {
+    @apply bg-slate-50 border-slate-300 shadow-md transform -translate-y-0.5;
   }
+  
+  .stage-indicator.active:hover {
+    @apply bg-blue-50/60 border-blue-600 shadow-lg shadow-blue-500/30 transform -translate-y-0.5;
+  }
+  
+  .stage-indicator.completed:hover {
+    @apply bg-green-50/60 border-green-500 shadow-lg shadow-green-500/30 transform -translate-y-0.5;
+  }
+  
+  .stage-indicator.completed.active {
+    @apply bg-green-50/50 border-green-500 shadow-md shadow-green-500/25;
+  }
+  
+  .stage-indicator.completed.active:hover {
+    @apply bg-green-50/70 border-green-600 shadow-lg shadow-green-500/35 transform -translate-y-0.5;
+  }
+  
+
   
   /* Loading Skeleton with Medical Theme */
   .medical-skeleton {
@@ -234,25 +454,20 @@
   
   /* Dashboard Stats Cards */
   .stats-card {
-    @apply bg-white border border-slate-200 rounded-2xl p-5 transition-all duration-300 relative overflow-hidden;
+    @apply bg-white border border-slate-200 rounded-2xl p-5 relative overflow-hidden;
   }
   
-  /* Settings Dropdown Menu */
+  /* Settings Dropdown Menu - Always on Top */
   .settings-dropdown {
-    @apply absolute right-0 top-full mt-1 bg-white border border-slate-200/50 rounded-2xl shadow-2xl py-1 min-w-52 z-50 opacity-100 transform translate-y-0 transition-all duration-200;
+    @apply absolute right-0 top-full mt-1 bg-white border border-slate-200/50 rounded-2xl shadow-2xl py-1 min-w-52 opacity-100 transform translate-y-0 transition-all duration-200;
+    z-index: 999999;
   }
-  
-  .stats-card::before {
-    content: '';
-    @apply absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-blue-600 transform -translate-x-full transition-transform duration-300;
-  }
-  
-  .stats-card:hover::before {
-    @apply translate-x-0;
-  }
-  
-  .stats-card:hover {
-    @apply -translate-y-1 shadow-lg;
+
+  /* Settings Dropdown Portal - Fixed positioning outside header */
+  .settings-dropdown-portal {
+    @apply bg-white border border-slate-200/50 rounded-2xl shadow-2xl py-1 min-w-52 opacity-100 transform translate-y-0 transition-all duration-200;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
   
   /* Smooth Scroll */
@@ -260,6 +475,88 @@
     scroll-behavior: smooth;
   }
   
+  /* Current Stage Progress Badge Animation */
+  .current-stage-badge {
+    animation: gentle-glow 2s ease-in-out infinite alternate;
+  }
+  
+  @keyframes gentle-glow {
+    from {
+      box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+    }
+    to {
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.5), 0 0 25px rgba(59, 130, 246, 0.2);
+    }
+  }
+  
+  .current-stage-badge.orange {
+    animation: gentle-glow-orange 2s ease-in-out infinite alternate;
+  }
+  
+  @keyframes gentle-glow-orange {
+    from {
+      box-shadow: 0 0 5px rgba(251, 146, 60, 0.3);
+    }
+    to {
+      box-shadow: 0 0 15px rgba(251, 146, 60, 0.5), 0 0 25px rgba(251, 146, 60, 0.2);
+    }
+  }
+  
+  @keyframes dual-ring-glow {
+    from {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0.9;
+      transform: scale(1.01);
+    }
+  }
+  
+  @keyframes clean-ring-glow {
+    from {
+      opacity: 0.8;
+      transform: scale(1);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1.005);
+    }
+  }
+  
+  @keyframes progress-glow {
+    from {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1.01);
+    }
+  }
+  
+  @keyframes particle-float {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.5);
+    }
+  }
+  
+  @keyframes skeleton-wave {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+  
+
+
   /* Custom scrollbar styling for webkit browsers */
   ::-webkit-scrollbar {
     @apply w-1.5;

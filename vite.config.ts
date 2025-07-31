@@ -17,13 +17,21 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          utils: ['lucide-react', 'framer-motion', 'html2canvas', 'jspdf'],
-          supabase: ['@supabase/supabase-js']
+          charts: ['recharts'],
+          utils: ['lucide-react'],
+          pdf: ['html2canvas', 'jspdf']
         }
       }
-    }
+    },
+    chunkSizeWarningLimit: 1000,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
   },
-  base: './',
   server: {
     port: 3000,
     host: true
@@ -32,6 +40,9 @@ export default defineConfig({
     global: 'globalThis',
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'lucide-react', 'framer-motion']
+    include: ['react', 'react-dom', 'lucide-react', 'recharts']
+  },
+  esbuild: {
+    logOverride: { 'this-is-undefined-in-esm': 'silent' }
   }
 })

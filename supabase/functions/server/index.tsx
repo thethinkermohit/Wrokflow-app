@@ -301,9 +301,8 @@ app.get("/admin/all-progress", async (c) => {
             
             tasks.forEach((task: any, taskIndex: number) => {
               try {
-                [1, 2, 3, 4].forEach(stage => {
-                  const stageData = task.stages && task.stages[stage];
-                  const stageCheckboxes = stageData?.checkboxes || [];
+                ['stage1', 'stage2', 'stage3', 'stage4'].forEach(stageKey => {
+                  const stageCheckboxes = task.stages && task.stages[stageKey] ? task.stages[stageKey] : [];
                   totalCheckboxes += stageCheckboxes.length;
                   completedCheckboxes += stageCheckboxes.filter((cb: any) => cb && cb.completed).length;
                 });
@@ -314,19 +313,17 @@ app.get("/admin/all-progress", async (c) => {
             
             // Count completed stages - simplified logic
             if (tasks.length > 0) {
-              [1, 2, 3, 4].forEach(stage => {
+              ['stage1', 'stage2', 'stage3', 'stage4'].forEach(stageKey => {
                 try {
                   const allStageTasksCompleted = tasks.every((task: any) => {
-                    const stageData = task.stages && task.stages[stage];
-                    if (!stageData) return true;
-                    const stageCheckboxes = stageData.checkboxes || [];
+                    const stageCheckboxes = task.stages && task.stages[stageKey] ? task.stages[stageKey] : [];
                     return stageCheckboxes.length === 0 || stageCheckboxes.every((cb: any) => cb && cb.completed);
                   });
                   if (allStageTasksCompleted) {
                     stagesCompleted++;
                   }
                 } catch (stageError) {
-                  console.error(`Error processing stage ${stage}:`, stageError);
+                  console.error(`Error processing stage ${stageKey}:`, stageError);
                 }
               });
             }

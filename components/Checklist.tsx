@@ -8,40 +8,62 @@ import {
   isStageUnlocked, 
   isStageTabEnabled, 
   isStageFullyCompleted, 
-  calculateStageProgress 
+  calculateStageProgress,
+  updateTaskMetadata
 } from "./utils/taskHelpers";
 
 interface ChecklistProps {
   tasks: Task[];
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+  initialStage?: string | null;
+  onStageChange?: () => void;
 }
 
-export function Checklist({ tasks, setTasks }: ChecklistProps) {
+export function Checklist({ tasks, setTasks, initialStage, onStageChange }: ChecklistProps) {
   const [currentStage, setCurrentStage] = useState<string>("stage1");
   const [showCelebration, setShowCelebration] = useState(false);
   const [showReward, setShowReward] = useState(false);
   const [celebratingStage, setCelebratingStage] = useState<number>(1);
   const previousCompletionState = useRef<{ [key: string]: boolean }>({});
 
+  // Effect to handle initial stage from navigation
+  useEffect(() => {
+    if (initialStage && initialStage !== currentStage) {
+      setCurrentStage(initialStage);
+      // Call onStageChange to clear the initialStage in parent
+      onStageChange?.();
+    }
+  }, [initialStage, currentStage, onStageChange]);
+
   const toggleCheckbox = (taskId: string, stageKey: keyof Task['stages'], checkboxId: string) => {
     const task = tasks.find(t => t.id === taskId);
     if (!task || !isStageUnlocked(task, stageKey)) return;
 
-    setTasks(tasks.map(task => {
-      if (task.id === taskId) {
-        return {
-          ...task,
+    setTasks(tasks.map(currentTask => {
+      if (currentTask.id === taskId) {
+        // Find the checkbox to get its current state
+        const checkbox = currentTask.stages[stageKey].find(cb => cb.id === checkboxId);
+        if (!checkbox) return currentTask;
+        
+        const newCompletedState = !checkbox.completed;
+        
+        // Update the task with new checkbox state
+        const updatedTask = {
+          ...currentTask,
           stages: {
-            ...task.stages,
-            [stageKey]: task.stages[stageKey].map(checkbox =>
-              checkbox.id === checkboxId
-                ? { ...checkbox, completed: !checkbox.completed }
-                : checkbox
+            ...currentTask.stages,
+            [stageKey]: currentTask.stages[stageKey].map(cb =>
+              cb.id === checkboxId
+                ? { ...cb, completed: newCompletedState }
+                : cb
             )
           }
         };
+        
+        // Update metadata with tracking information
+        return updateTaskMetadata(updatedTask, checkboxId, newCompletedState);
       }
-      return task;
+      return currentTask;
     }));
   };
 
@@ -129,7 +151,14 @@ export function Checklist({ tasks, setTasks }: ChecklistProps) {
 
       {/* Stage Tabs and Content */}
       <div className="flex flex-col flex-1 min-h-0 bg-white border-b border-gray-200">
-        <Tabs value={currentStage} onValueChange={setCurrentStage} className="w-full flex flex-col h-full">
+        <Tabs 
+          value={currentStage} 
+          onValueChange={(value) => {
+            setCurrentStage(value);
+            onStageChange?.();
+          }} 
+          className="w-full flex flex-col h-full"
+        >
           <TabsList className="grid w-full grid-cols-4 rounded-none h-auto bg-transparent flex-shrink-0">
             <TabsTrigger 
               value="stage1" 

@@ -19,12 +19,30 @@ export function TaskCard({ task, stageKey, onToggleCheckbox, isUnlocked }: TaskC
 
   const progressPercentage = Math.round((completedCount / stageCheckboxes.length) * 100);
   const isCompleted = completedCount === stageCheckboxes.length;
+  
+  // Determine checkbox class based on stage
+  const getCheckboxClass = (stageKey: keyof Task['stages']) => {
+    switch (stageKey) {
+      case 'stage1':
+        return 'medical-checkbox'; // Square (default)
+      case 'stage2':
+        return 'medical-checkbox-circle'; // Circle
+      case 'stage3':
+        return 'medical-checkbox-diamond'; // Diamond
+      case 'stage4':
+        return 'medical-checkbox-hexagon'; // Hexagon
+      default:
+        return 'medical-checkbox';
+    }
+  };
+  
+  const checkboxClassName = getCheckboxClass(stageKey);
 
   return (
     <div 
       className={`glass-card p-5 transition-all duration-300 hover:scale-[1.01] group ${
         !isUnlocked ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
-      } ${isCompleted ? 'pulse-completed' : ''}`}
+      } ${isCompleted ? 'completed-card-tint' : ''}`}
     >
       {/* Task Header */}
       <div className="flex items-center justify-between mb-4">
@@ -83,23 +101,9 @@ export function TaskCard({ task, stageKey, onToggleCheckbox, isUnlocked }: TaskC
             <button
               onClick={() => isUnlocked && onToggleCheckbox(task.id, stageKey, checkbox.id)}
               disabled={!isUnlocked}
-              className={`medical-checkbox transition-all duration-200 hover:scale-105 ${
-                checkbox.completed 
-                  ? 'bg-green-500 border-green-500' 
-                  : 'hover:border-blue-500 hover:bg-blue-50'
-              } ${!isUnlocked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
-            >
-              {checkbox.completed && (
-                <svg 
-                  className="absolute inset-0 w-full h-full p-1 text-white transition-transform duration-200 scale-100" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                </svg>
-              )}
-            </button>
+              className={`${checkboxClassName} ${!isUnlocked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+              data-checked={checkbox.completed}
+            ></button>
             
 
           </div>
