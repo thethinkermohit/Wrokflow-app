@@ -1,10 +1,5 @@
 import { useState } from "react";
-// import { Button } from "./ui/button";
-// import { Input } from "./ui/input";
-// import { Label } from "./ui/label";
-// import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { AlertCircle, Lock, User, Wifi } from "lucide-react";
-// import { Alert, AlertDescription } from "./ui/alert";
 import { apiClient } from "../utils/supabase/client";
 
 interface LoginProps {
@@ -48,9 +43,10 @@ export function Login({ onLogin }: LoginProps) {
       const backendMode = apiClient.getBackendMode();
       console.log('Connection test response:', response);
       setError(`✅ Connection OK! Backend: ${backendMode} | Status: ${response.status}`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Connection test failed:', error);
-      setError(`❌ Connection failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setError(`❌ Connection failed: ${errorMessage}`);
     } finally {
       setTestingConnection(false);
     }

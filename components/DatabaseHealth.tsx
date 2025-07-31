@@ -62,9 +62,10 @@ export function DatabaseHealth() {
         setHealthData(data);
         setLastUpdated(new Date());
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error loading database health:', error);
-      setError(error.message || 'Failed to load database health information');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load database health information';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

@@ -391,7 +391,7 @@ export const generatePDF = async (tasks: Task[], currentMonth: string, suggestio
     // Show all stages with 0% progress as placeholder
     const allStages = ['Stage 1', 'Stage 2', 'Stage 3', 'Stage 4'];
     
-    allStages.forEach((stageName, index) => {
+    allStages.forEach((stageName, _index) => {
       yPosition = checkPageBreak(pdf, yPosition, 12, pageHeight);
       
       // Stage name with proper formatting
@@ -708,8 +708,9 @@ export const generatePDF = async (tasks: Task[], currentMonth: string, suggestio
   pdf.text('Committed to Quality Patient Care & Professional Growth', pageWidth / 2, footerY + 20, { align: 'center' });
 
     return pdf;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error in PDF generation:', error);
-    throw new Error(`PDF generation failed: ${error.message || 'Unknown error'}`);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    throw new Error(`PDF generation failed: ${errorMessage}`);
   }
 };

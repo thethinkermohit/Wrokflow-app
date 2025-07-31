@@ -36,8 +36,8 @@ export function Insights({ tasks, onBackClick }: InsightsProps) {
   
   const insights = hasRealData ? generateRealInsights(analytics, dailyData) : [];
   const totalTasks = hasRealData ? analytics.completedCheckboxes : 0;
-  const avgDaily = hasRealData ? (analytics.dailyData.length > 0 ? Math.round(analytics.completedCheckboxes / analytics.insights.totalWorkingDays) : 0) : 0;
-  const bestDay = hasRealData ? (analytics.insights.mostProductiveDay ? { day: new Date(analytics.insights.mostProductiveDay).getDate(), tasks: Math.max(...dailyData.map(d => d.completed)) } : { tasks: 0 }) : { tasks: 0 };
+  const avgDaily = hasRealData ? (analytics.dailyData.length > 0 ? Math.round(analytics.completedCheckboxes / (analytics.insights?.totalWorkingDays || 1)) : 0) : 0;
+  const _bestDay = hasRealData ? (analytics.insights?.mostProductiveDay ? { day: new Date(analytics.insights.mostProductiveDay).getDate(), tasks: Math.max(...dailyData.map(d => d.completed)) } : { tasks: 0 }) : { tasks: 0 };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30 p-4 pb-20">
@@ -110,7 +110,7 @@ export function Insights({ tasks, onBackClick }: InsightsProps) {
                     borderRadius: '8px',
                     fontSize: '14px'
                   }}
-                  formatter={(value: any, name: any) => [`${value} tasks`, 'Completed']}
+                  formatter={(value: any, _name: any) => [`${value} tasks`, 'Completed']}
                   labelFormatter={(label: any) => `${new Date().toLocaleDateString('en-US', { month: 'long' })} ${label}, ${new Date().getFullYear()}`}
                 />
                 <Bar 
@@ -228,8 +228,8 @@ export function Insights({ tasks, onBackClick }: InsightsProps) {
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">Productivity Insight</h3>
             <p className="text-sm text-gray-700 leading-relaxed">
-              {analytics.insights.streakCount > 0 
-                ? `Your ${analytics.insights.streakCount}-day streak shows excellent consistency. Keep building this momentum for optimal skill development.`
+              {(analytics.insights?.streakCount || 0) > 0 
+                ? `Your ${analytics.insights?.streakCount || 0}-day streak shows excellent consistency. Keep building this momentum for optimal skill development.`
                 : `You've completed ${analytics.completionRate}% of your workflow. Consistent daily practice leads to exceptional patient care skills.`
               }
             </p>

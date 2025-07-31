@@ -1,4 +1,3 @@
-// import { Progress } from "./ui/progress";
 import { Target } from "lucide-react";
 import { Task } from "./constants/taskData";
 import { calculateStageProgress, isStageFullyCompleted } from "./utils/taskHelpers";

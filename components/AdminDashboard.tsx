@@ -28,7 +28,7 @@ export function AdminDashboard() {
   const [usersProgress, setUsersProgress] = useState<UserProgress[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  // const [selectedUser, setSelectedUser] = useState<UserProgress | null>(null);
+
 
   const loadUsersProgress = async () => {
     try {
@@ -36,14 +36,18 @@ export function AdminDashboard() {
       setError("");
       const response = await apiClient.getAllUsersProgress();
       setUsersProgress(response.users || []);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error loading users progress:', error);
-      console.error('Error details:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      });
-      setError(error.message || 'Failed to load users progress');
+      if (error instanceof Error) {
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          name: error.name
+        });
+        setError(error.message || 'Failed to load users progress');
+      } else {
+        setError('Failed to load users progress');
+      }
     } finally {
       setIsLoading(false);
     }

@@ -1,4 +1,4 @@
-import { Task, TaskAnalytics, DailyCompletionData } from '../constants/taskData';
+import type { Task, TaskAnalytics, DailyCompletionData } from '../constants/taskData';
 
 // Generate mock data for July 2025 daily task completion
 export const generateJulyData = () => {
@@ -159,19 +159,19 @@ export const generateRealInsights = (analytics: TaskAnalytics, dailyData: DailyC
   }
   
   // Consistency insight
-  if (analytics.insights.streakCount >= 7) {
+  if ((analytics.insights?.streakCount || 0) >= 7) {
     insights.push({
       icon: "Calendar",
       title: "Consistency Champion",
-      description: `Impressive ${analytics.insights.streakCount}-day activity streak! This consistency is key to mastering dental procedures.`,
+      description: `Impressive ${analytics.insights?.streakCount || 0}-day activity streak! This consistency is key to mastering dental procedures.`,
       color: "text-indigo-600",
       bgColor: "bg-indigo-50"
     });
-  } else if (analytics.insights.totalWorkingDays >= 5) {
+  } else if ((analytics.insights?.totalWorkingDays || 0) >= 5) {
     insights.push({
       icon: "Clock",
       title: "Building Momentum",
-      description: `You've been active for ${analytics.insights.totalWorkingDays} days. Try to maintain regular practice for optimal skill development.`,
+      description: `You've been active for ${analytics.insights?.totalWorkingDays || 0} days. Try to maintain regular practice for optimal skill development.`,
       color: "text-teal-600",
       bgColor: "bg-teal-50"
     });
