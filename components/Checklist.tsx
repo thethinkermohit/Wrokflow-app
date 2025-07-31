@@ -112,7 +112,7 @@ export function Checklist({ tasks, setTasks }: ChecklistProps) {
         onClose={handleRewardClose}
       />
       
-    <div className="flex flex-col h-full bg-gray-50">
+    <div className="flex flex-col h-full bg-white">
       {/* Progress Header */}
       <div className="bg-white p-4 shadow-sm flex-shrink-0">
         <div className="bg-blue-50 rounded-lg p-3">

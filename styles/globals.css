@@ -6,8 +6,8 @@
   --font-size: 14px;
   
   /* Refined Color Palette - Blue, Grey, Purple Accent */
-  --background: 241 245 249;
-  --background-solid: #f1f5f9;
+  --background: 255 255 255;
+  --background-solid: #ffffff;
   --foreground: 30 41 59;
   
   /* Card System with Glassmorphism */
@@ -42,8 +42,8 @@
   --success-dark: #16a34a;
   
   /* Grey Variations */
-  --muted: 248 250 252;
-  --muted-dark: #e2e8f0;
+  --muted: 255 255 255;
+  --muted-dark: #f8fafc;
   --muted-foreground: 100 116 139;
   
   /* UI Elements */
