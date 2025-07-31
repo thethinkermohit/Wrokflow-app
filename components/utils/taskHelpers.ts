@@ -307,51 +307,12 @@ export const generateTaskAnalytics = (tasks: Task[]): TaskAnalytics => {
   };
 };
 
-// Get realistic daily completion data for current month (with fallback to generated data)
+// Get daily completion data for current month (real data only)
 export const getCurrentMonthDailyData = (tasks: Task[]): DailyCompletionData[] => {
   const currentDate = new Date();
   const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
   const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
   
-  const realData = generateDailyCompletionData(tasks, monthStart, monthEnd);
-  
-  // If no real data exists, generate realistic sample data based on current progress
-  if (realData.every(day => day.completed === 0)) {
-    return generateSampleDailyData(tasks, monthStart, currentDate);
-  }
-  
-  return realData;
+  return generateDailyCompletionData(tasks, monthStart, monthEnd);
 };
 
-// Generate realistic sample data when no real tracking data exists
-export const generateSampleDailyData = (tasks: Task[], startDate: Date, endDate: Date): DailyCompletionData[] => {
-  const analytics = generateTaskAnalytics(tasks);
-  const totalCompleted = analytics.completedCheckboxes;
-  const today = endDate.getDate();
-  
-  const dailyData: DailyCompletionData[] = [];
-  let cumulativeCompleted = 0;
-  const avgDailyRate = totalCompleted / Math.max(today, 1);
-  
-  for (let day = 1; day <= today; day++) {
-    const date = new Date(startDate.getFullYear(), startDate.getMonth(), day);
-    const dateStr = date.toISOString().split('T')[0];
-    
-    // Add realistic variation (±40% of average)
-    const variation = (Math.random() - 0.5) * 0.8;
-    const dailyCompleted = Math.max(0, Math.round(avgDailyRate * (1 + variation)));
-    cumulativeCompleted += dailyCompleted;
-    
-    // Don't exceed actual completed count
-    const actualDailyCompleted = Math.min(dailyCompleted, Math.max(0, totalCompleted - cumulativeCompleted + dailyCompleted));
-    
-    dailyData.push({
-      date: dateStr,
-      completed: actualDailyCompleted,
-      taskBreakdown: {},
-      stageBreakdown: { stage1: 0, stage2: 0, stage3: 0, stage4: 0 }
-    });
-  }
-  
-  return dailyData;
-};

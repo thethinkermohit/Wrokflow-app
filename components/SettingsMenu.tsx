@@ -10,10 +10,10 @@ interface SettingsMenuProps {
   isOpen: boolean;
   onClose: () => void;
   onLogout: () => void;
-  onSaveAndRefresh: () => void;
+  onExportAndRefresh: () => void;
 }
 
-export function SettingsMenu({ tasks, isOpen, onClose, onLogout, onSaveAndRefresh }: SettingsMenuProps) {
+export function SettingsMenu({ tasks, isOpen, onClose, onLogout, onExportAndRefresh }: SettingsMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   
   // Ensure tasks is an array
@@ -73,12 +73,12 @@ export function SettingsMenu({ tasks, isOpen, onClose, onLogout, onSaveAndRefres
     }
   };
 
-  const handleSaveAndRefresh = async () => {
+  const handleExportAndRefresh = async () => {
     try {
-      await onSaveAndRefresh();
-      onClose(); // Close menu after successful save
+      await onExportAndRefresh();
+      onClose(); // Close menu after successful export
     } catch (error) {
-      console.error('Error in save and refresh:', error);
+      console.error('Error in export and refresh:', error);
     }
   };
 
@@ -132,6 +132,9 @@ export function SettingsMenu({ tasks, isOpen, onClose, onLogout, onSaveAndRefres
           <div className="mb-6">
             <h2 className="text-xl font-bold text-gray-900">Settings</h2>
             <p className="text-sm text-gray-600">Export reports and manage your account</p>
+            <div className="mt-2 text-xs text-blue-600 bg-blue-50 px-3 py-1 rounded-full inline-block">
+              Auto-save active - progress syncs automatically
+            </div>
           </div>
 
           {/* Action Buttons */}
@@ -143,21 +146,20 @@ export function SettingsMenu({ tasks, isOpen, onClose, onLogout, onSaveAndRefres
             >
               <Download className="w-4 h-4" />
               <div className="text-left">
-                <div className="font-semibold">Export Report</div>
-                <div className="text-xs opacity-90">PDF with insights & tips</div>
+                <div className="font-semibold">Quick Export</div>
+                <div className="text-xs opacity-90">PDF report only</div>
               </div>
             </Button>
 
             <Button
-              onClick={handleSaveAndRefresh}
-              variant="outline"
-              className="w-full flex items-center justify-center gap-3"
+              onClick={handleExportAndRefresh}
+              className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white"
               size="lg"
             >
               <RefreshCw className="w-4 h-4" />
               <div className="text-left">
-                <div className="font-semibold">Save & Refresh</div>
-                <div className="text-xs text-gray-600">Sync your progress</div>
+                <div className="font-semibold">Export & Refresh</div>
+                <div className="text-xs opacity-90">PDF backup + fresh data</div>
               </div>
             </Button>
 

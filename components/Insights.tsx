@@ -4,7 +4,7 @@ import { Card } from "./ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Task } from "./constants/taskData";
 import { generateTaskAnalytics, getCurrentMonthDailyData } from "./utils/taskHelpers";
-import { generateJulyData, generateInsights, generateRealInsights } from "./utils/insightsHelpers";
+import { generateRealInsights } from "./utils/insightsHelpers";
 
 interface InsightsProps {
   tasks: Task[];
@@ -27,17 +27,17 @@ export function Insights({ tasks, onBackClick }: InsightsProps) {
   const dailyData = getCurrentMonthDailyData(tasks);
   const hasRealData = analytics.completedCheckboxes >= 5; // Need at least 5 completed checkboxes for insights
   
-  // Use real data when available, fallback to sample data for demonstration
+  // Only use real data when available, no sample data fallback
   const chartData = hasRealData ? dailyData.map(day => ({
     day: new Date(day.date).getDate().toString(),
     tasks: day.completed,
     dayName: new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })
-  })) : generateJulyData();
+  })) : [];
   
-  const insights = hasRealData ? generateRealInsights(analytics, dailyData) : generateInsights(chartData);
-  const totalTasks = hasRealData ? analytics.completedCheckboxes : chartData.reduce((sum, d) => sum + d.tasks, 0);
-  const avgDaily = hasRealData ? (analytics.dailyData.length > 0 ? Math.round(analytics.completedCheckboxes / analytics.insights.totalWorkingDays) : 0) : Math.round(totalTasks / chartData.length);
-  const bestDay = hasRealData ? (analytics.insights.mostProductiveDay ? { day: new Date(analytics.insights.mostProductiveDay).getDate(), tasks: Math.max(...dailyData.map(d => d.completed)) } : { tasks: 0 }) : chartData.reduce((max, d) => d.tasks > max.tasks ? d : max);
+  const insights = hasRealData ? generateRealInsights(analytics, dailyData) : [];
+  const totalTasks = hasRealData ? analytics.completedCheckboxes : 0;
+  const avgDaily = hasRealData ? (analytics.dailyData.length > 0 ? Math.round(analytics.completedCheckboxes / analytics.insights.totalWorkingDays) : 0) : 0;
+  const bestDay = hasRealData ? (analytics.insights.mostProductiveDay ? { day: new Date(analytics.insights.mostProductiveDay).getDate(), tasks: Math.max(...dailyData.map(d => d.completed)) } : { tasks: 0 }) : { tasks: 0 };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30 p-4 pb-20">
@@ -63,7 +63,7 @@ export function Insights({ tasks, onBackClick }: InsightsProps) {
         <Card className="p-4 bg-white/80 backdrop-blur-sm border-slate-200">
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-600">{totalTasks}</div>
-            <div className="text-xs text-gray-600 font-medium">{hasRealData ? "Total Completed" : "Sample Tasks"}</div>
+            <div className="text-xs text-gray-600 font-medium">{hasRealData ? "Total Completed" : "Tasks Completed"}</div>
           </div>
         </Card>
         <Card className="p-4 bg-white/80 backdrop-blur-sm border-slate-200">
@@ -74,8 +74,8 @@ export function Insights({ tasks, onBackClick }: InsightsProps) {
         </Card>
         <Card className="p-4 bg-white/80 backdrop-blur-sm border-slate-200">
           <div className="text-center">
-            <div className="text-2xl font-bold text-purple-600">{hasRealData ? analytics.completionRate : bestDay.tasks}</div>
-            <div className="text-xs text-gray-600 font-medium">{hasRealData ? "Completion %" : "Peak Day"}</div>
+            <div className="text-2xl font-bold text-purple-600">{hasRealData ? analytics.completionRate : 0}</div>
+            <div className="text-xs text-gray-600 font-medium">{hasRealData ? "Completion %" : "Completion %"}</div>
           </div>
         </Card>
       </div>
@@ -86,11 +86,10 @@ export function Insights({ tasks, onBackClick }: InsightsProps) {
           <h2 className="text-lg font-semibold text-gray-900">Daily Task Completion</h2>
           <p className="text-sm text-gray-600">
             {hasRealData ? `Tasks completed each day in ${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` 
-             : chartData.length > 0 ? "Sample data showing potential insights available"
              : "Complete more tasks to see your progress trends"}
           </p>
         </div>
-        {hasRealData || chartData.length > 0 ? (
+        {hasRealData ? (
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -112,7 +111,7 @@ export function Insights({ tasks, onBackClick }: InsightsProps) {
                     fontSize: '14px'
                   }}
                   formatter={(value: any, name: any) => [`${value} tasks`, 'Completed']}
-                  labelFormatter={(label: any) => `${hasRealData ? new Date().toLocaleDateString('en-US', { month: 'long' }) : 'July'} ${label}, ${new Date().getFullYear()}`}
+                  labelFormatter={(label: any) => `${new Date().toLocaleDateString('en-US', { month: 'long' })} ${label}, ${new Date().getFullYear()}`}
                 />
                 <Bar 
                   dataKey="tasks" 
@@ -149,7 +148,7 @@ export function Insights({ tasks, onBackClick }: InsightsProps) {
       {/* Smart Insights or Placeholder */}
       <div className="space-y-4">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Smart Insights</h2>
-        {hasRealData || chartData.length > 0 ? (
+        {hasRealData ? (
           insights.map((insight, index) => (
             <Card key={index} className="p-4 bg-white/80 backdrop-blur-sm border-slate-200">
               <div className="flex items-start gap-3">

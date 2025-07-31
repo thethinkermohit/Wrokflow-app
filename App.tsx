@@ -240,25 +240,41 @@ export default function App() {
     }
   };
 
-  const handleSaveAndRefresh = async () => {
+  const handleExportAndRefresh = async () => {
     try {
-      console.log("Saving and refreshing data...");
+      console.log("Starting export and refresh process...");
       
-      // Save current progress
-      await apiClient.saveProgress(tasks);
-      console.log("Progress saved successfully");
+      // Step 1: Generate and save PDF report
+      try {
+        const { generatePDF } = await import('./components/utils/pdfGenerator');
+        const { generateDentalSuggestions } = await import('./components/utils/dentalSuggestions');
+        
+        const safeTasks = Array.isArray(tasks) ? tasks : [];
+        const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        const suggestions = generateDentalSuggestions(safeTasks);
+        
+        console.log("Generating PDF report...");
+        const pdf = await generatePDF(safeTasks, currentMonth, suggestions);
+        
+        // Save the PDF
+        pdf.save(`Workflow-Tracker-Report-${currentMonth.replace(' ', '-')}.pdf`);
+        console.log("PDF report generated and saved successfully");
+      } catch (pdfError) {
+        console.error("Error generating PDF:", pdfError);
+        alert("Warning: Could not generate PDF report, but continuing with data refresh...");
+      }
       
-      // Reload user progress
+      // Step 2: Refresh data from server (no need to save since auto-save is already active)
       await loadUserProgress();
-      console.log("Data refreshed successfully");
+      console.log("Data refreshed from server successfully");
       
-      // Navigate back to dashboard
+      // Step 3: Navigate back to dashboard
       setActiveTab("dashboard");
       
-      alert("Data saved and refreshed successfully!");
+      alert("PDF report saved and data refreshed successfully!");
     } catch (error: any) {
-      console.error("Error during save and refresh:", error);
-      alert("Error saving data. Please try again.");
+      console.error("Error during export and refresh:", error);
+      alert("Error during export and refresh. Please try again.");
     }
   };
 
@@ -392,7 +408,7 @@ export default function App() {
         isOpen={isSettingsMenuOpen}
         onClose={() => setIsSettingsMenuOpen(false)}
         onLogout={handleLogout}
-        onSaveAndRefresh={handleSaveAndRefresh}
+        onExportAndRefresh={handleExportAndRefresh}
       />
     </div>
   );
