@@ -24,13 +24,7 @@ export default defineConfig({
       }
     },
     chunkSizeWarningLimit: 1000,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
-    },
+    minify: true,
   },
   server: {
     port: 3000,
@@ -43,6 +37,7 @@ export default defineConfig({
     include: ['react', 'react-dom', 'lucide-react', 'recharts']
   },
   esbuild: {
-    logOverride: { 'this-is-undefined-in-esm': 'silent' }
+    logOverride: { 'this-is-undefined-in-esm': 'silent' },
+    drop: ['console', 'debugger']
   }
 })
