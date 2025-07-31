@@ -21,6 +21,10 @@ export default defineConfig({
           utils: ['lucide-react'],
           pdf: ['html2canvas', 'jspdf']
         }
+      },
+      external: (id) => {
+        // Exclude LICENSE directory files from build
+        return id.includes('/LICENSE/') || id.startsWith('LICENSE/');
       }
     },
     chunkSizeWarningLimit: 1000,

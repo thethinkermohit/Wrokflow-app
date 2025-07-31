@@ -124,3 +124,6 @@ workbox-*.js.map
 
 # Turborepo
 .turbo
+
+# Problematic LICENSE directory with .tsx files
+LICENSE/
