@@ -1,5 +1,5 @@
 // This file is no longer needed - authentication has been removed
-import { INITIAL_TASKS, Task } from "../components/constants/taskData";
+import { INITIAL_TASKS } from "../components/constants/taskData";
 
 export function useAuth() {
   return {
