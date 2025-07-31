@@ -1,0 +1,22 @@
+# Exclude server-side code that should not be built for frontend
+supabase/
+LICENSE/
+*.local
+.env
+.env.*
+!.env.example
+
+# Development files
+.git/
+.vscode/
+.idea/
+*.log
+node_modules/
+
+# Build artifacts
+dist/
+build/
+
+# Documentation
+*.md
+!README.md

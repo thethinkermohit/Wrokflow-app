@@ -23,8 +23,9 @@ export default defineConfig({
         }
       },
       external: (id) => {
-        // Exclude LICENSE directory files from build
-        return id.includes('/LICENSE/') || id.startsWith('LICENSE/');
+        // Exclude LICENSE directory files and Supabase functions from build
+        return id.includes('/LICENSE/') || id.startsWith('LICENSE/') || 
+               id.includes('/supabase/') || id.startsWith('supabase/');
       }
     },
     chunkSizeWarningLimit: 1000,

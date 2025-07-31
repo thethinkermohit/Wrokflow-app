@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from "./ui/alert";
 import { RefreshCw, Users, TrendingUp, CheckSquare, Clock } from "lucide-react";
 import { Button } from "./ui/button";
 import { apiClient } from "../utils/supabase/client";
+import { DatabaseHealth } from "./DatabaseHealth";
 
 interface UserProgress {
   userId: string;
@@ -151,9 +152,10 @@ export function AdminDashboard() {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="overview">Users Overview</TabsTrigger>
             <TabsTrigger value="detailed">Detailed Progress</TabsTrigger>
+            <TabsTrigger value="database">Database Health</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
@@ -273,6 +275,10 @@ export function AdminDashboard() {
                 </Card>
               ))}
             </div>
+          </TabsContent>
+
+          <TabsContent value="database">
+            <DatabaseHealth />
           </TabsContent>
         </Tabs>
 

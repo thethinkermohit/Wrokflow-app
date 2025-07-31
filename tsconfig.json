@@ -27,5 +27,5 @@
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "dist", "LICENSE"]
+  "exclude": ["node_modules", "dist", "LICENSE", "supabase"]
 }
