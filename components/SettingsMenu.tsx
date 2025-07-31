@@ -1,4 +1,4 @@
-import { Download, RefreshCw, LogOut, X } from "lucide-react";
+import { Download, RefreshCw, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { Task } from "./constants/taskData";
 import { useEffect, useRef } from 'react';
@@ -133,7 +133,7 @@ export function SettingsMenu({ tasks, isOpen, onClose, onLogout, onExportAndRefr
             <h2 className="text-xl font-bold text-gray-900">Settings</h2>
             <p className="text-sm text-gray-600">Export reports and manage your account</p>
             <div className="mt-2 text-xs text-blue-600 bg-blue-50 px-3 py-1 rounded-full inline-block">
-              Auto-save active - progress syncs automatically
+              Local storage - progress saved on device
             </div>
           </div>
 
@@ -169,10 +169,10 @@ export function SettingsMenu({ tasks, isOpen, onClose, onLogout, onExportAndRefr
               className="w-full flex items-center justify-center gap-3 text-red-600 border-red-200 hover:bg-red-50"
               size="lg"
             >
-              <LogOut className="w-4 h-4" />
+              <RefreshCw className="w-4 h-4" />
               <div className="text-left">
-                <div className="font-semibold">Logout</div>
-                <div className="text-xs text-gray-600">Sign out safely</div>
+                <div className="font-semibold">Reset Progress</div>
+                <div className="text-xs text-gray-600">Clear all tasks</div>
               </div>
             </Button>
           </div>

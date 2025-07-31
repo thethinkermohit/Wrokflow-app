@@ -1,18 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dashboard } from "./components/Dashboard";
 import { Checklist } from "./components/Checklist";
 import { Insights } from "./components/Insights";
 import { SettingsMenu } from "./components/SettingsMenu";
 import { BottomNavigation } from "./components/BottomNavigation";
-import { Login } from "./components/Login";
-import { AdminDashboard } from "./components/AdminDashboard";
-import { LoadingScreen } from "./components/LoadingScreen";
-import { AdminHeader } from "./components/AdminHeader";
 import { AppHeader } from "./components/AppHeader";
-import { useAuth } from "./hooks/useAuth";
-import { useAutoSave } from "./hooks/useAutoSave";
+import { INITIAL_TASKS, Task } from "./components/constants/taskData";
 import { handleExportAndRefresh } from "./utils/pdfExport";
-import { apiClient } from "./utils/supabase/client";
+import { useAutoSave } from "./hooks/useAutoSave";
+
+console.log('🔍 App.tsx - Starting (no auth)...');
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<
@@ -20,63 +17,35 @@ export default function App() {
   >("dashboard");
   const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
   const [initialStage, setInitialStage] = useState<string | null>(null);
+  const [tasks, setTasks] = useState<Task[]>(INITIAL_TASKS);
 
-  const {
-    isAuthenticated,
-    currentUser,
-    isLoading,
-    tasks,
-    setTasks,
-    handleLogin,
-    handleLogout,
-    loadUserProgress,
-  } = useAuth();
-
-  // Handle auth errors from auto-save
-  const handleAuthError = () => {
-    apiClient.setSessionToken(null);
-    window.location.reload(); // Simple way to reset the entire app state
-  };
+  // Load tasks from local storage on startup
+  useEffect(() => {
+    try {
+      const savedTasks = localStorage.getItem('workflow-tracker-tasks');
+      if (savedTasks) {
+        const parsedTasks = JSON.parse(savedTasks);
+        if (Array.isArray(parsedTasks) && parsedTasks.length > 0) {
+          setTasks(parsedTasks);
+          console.log("Loaded tasks from local storage");
+        }
+      }
+    } catch (error) {
+      console.error("Error loading tasks from local storage:", error);
+    }
+  }, []);
 
   // Auto-save functionality
-  useAutoSave({
-    tasks,
-    isAuthenticated,
-    currentUser,
-    onAuthError: handleAuthError,
-  });
+  useAutoSave({ tasks });
+
+  // Simple refresh function for tasks
+  const loadUserProgress = async () => {
+    setTasks(INITIAL_TASKS);
+  };
 
   const onExportAndRefresh = () => {
     handleExportAndRefresh(tasks, loadUserProgress, setActiveTab);
   };
-
-  const onLogout = async () => {
-    await handleLogout();
-    setActiveTab("dashboard");
-  };
-
-  // Show loading screen during initial auth check
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
-  // Show login screen if not authenticated
-  if (!isAuthenticated) {
-    return <Login onLogin={handleLogin} />;
-  }
-
-  // Show admin dashboard for admin users
-  if (currentUser?.isAdmin) {
-    return (
-      <div className="min-h-screen bg-white">
-        <AdminHeader 
-          userFullName={currentUser.fullName} 
-          onLogout={onLogout} 
-        />
-        <AdminDashboard />
-      </div>
-    );
-  }
 
   return (
     <div
@@ -118,7 +87,7 @@ export default function App() {
         onTabChange={(tab) => {
           if (tab === "dashboard") {
             setActiveTab(tab);
-            setInitialStage(null); // Reset stage selection when going back to dashboard
+            setInitialStage(null);
           } else if (tab === "settings") {
             setIsSettingsMenuOpen(true);
           }
@@ -130,7 +99,13 @@ export default function App() {
         tasks={tasks}
         isOpen={isSettingsMenuOpen}
         onClose={() => setIsSettingsMenuOpen(false)}
-        onLogout={onLogout}
+        onLogout={() => {
+          // Reset tasks to initial state and clear local storage
+          setTasks(INITIAL_TASKS);
+          localStorage.removeItem('workflow-tracker-tasks');
+          setActiveTab("dashboard");
+          console.log("App reset to initial state");
+        }}
         onExportAndRefresh={onExportAndRefresh}
       />
     </div>

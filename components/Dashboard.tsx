@@ -274,15 +274,17 @@ export function Dashboard({ tasks, onStageClick, onInsightsClick }: DashboardPro
               <span className="text-base font-medium text-gray-700">Progress</span>
               {/* Custom Medical Progress Bar - Full Width */}
               <div className="flex-1 medical-progress">
-                <div 
-                  className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-out ${
-                    progressPercentage === 100 ? 'success' : ''
-                  }`}
-                  style={{ 
-                    width: `${progressPercentage}%`,
-                    background: progressPercentage === 100 ? 'var(--success)' : 'var(--primary)'
-                  }}
-                ></div>
+                {progressPercentage > 0 && (
+                  <div 
+                    className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-out ${
+                      progressPercentage === 100 ? 'success' : ''
+                    }`}
+                    style={{ 
+                      width: `${progressPercentage}%`,
+                      background: progressPercentage === 100 ? 'var(--success)' : 'var(--primary)'
+                    }}
+                  ></div>
+                )}
               </div>
               <span className="text-2xl font-bold text-blue-600 ml-2">
                 {progressPercentage}%
@@ -422,10 +424,12 @@ export function Dashboard({ tasks, onStageClick, onInsightsClick }: DashboardPro
                         {stageProgress}%
                       </div>
                       <div className="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden mt-1">
-                        <div 
-                          className={`h-full bg-gradient-to-r ${isCompleted ? stageColorsCompleted[index] : stageColors[index]} transition-all duration-700 ease-out`}
-                          style={{ width: `${stageProgress}%` }}
-                        ></div>
+                        {stageProgress > 0 && (
+                          <div 
+                            className={`h-full bg-gradient-to-r ${isCompleted ? stageColorsCompleted[index] : stageColors[index]} transition-all duration-700 ease-out`}
+                            style={{ width: `${stageProgress}%` }}
+                          ></div>
+                        )}
                       </div>
                     </div>
                   </div>

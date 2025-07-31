@@ -1,7 +1,8 @@
 import { projectId, publicAnonKey } from './info';
 import { localBackend } from './localBackend';
 
-// API client for server communication with automatic fallback to local backend
+console.log('🔍 Client.ts - Loading dependencies...');
+
 export class WorkflowTrackerAPI {
   private baseUrl: string;
   private sessionToken: string | null = null;
@@ -9,20 +10,27 @@ export class WorkflowTrackerAPI {
   private backendTested: boolean = false;
 
   constructor() {
+    console.log('🔍 WorkflowTrackerAPI - Constructor starting...');
+    
+    if (!projectId || !publicAnonKey) {
+      console.error('❌ Missing required configuration:', { projectId: !!projectId, publicAnonKey: !!publicAnonKey });
+      throw new Error('Missing required Supabase configuration');
+    }
+    
     this.baseUrl = `https://${projectId}.supabase.co/functions/v1/make-server-a605d6a2`;
+    console.log('✅ WorkflowTrackerAPI initialized successfully');
   }
 
   setSessionToken(token: string | null) {
     this.sessionToken = token;
-    // Store in localStorage for persistence
     try {
       if (token) {
         localStorage.setItem('workflow_tracker_session', token);
       } else {
         localStorage.removeItem('workflow_tracker_session');
       }
-    } catch (storageError) {
-      console.log('Could not access localStorage:', storageError);
+    } catch (error) {
+      console.log('localStorage error:', error);
     }
   }
 
@@ -30,8 +38,8 @@ export class WorkflowTrackerAPI {
     if (!this.sessionToken) {
       try {
         this.sessionToken = localStorage.getItem('workflow_tracker_session');
-      } catch (storageError) {
-        console.log('Could not access localStorage:', storageError);
+      } catch (error) {
+        console.log('localStorage error:', error);
         this.sessionToken = null;
       }
     }
@@ -42,20 +50,19 @@ export class WorkflowTrackerAPI {
     if (this.backendTested) return;
 
     try {
-      console.log('Testing server connectivity...');
       const response = await fetch(`${this.baseUrl}/`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
       
       if (response.ok) {
-        console.log('✅ Server backend is available');
+        console.log('✅ Server backend available');
         this.useLocalBackend = false;
       } else {
         throw new Error('Server not responding');
       }
     } catch (error) {
-      console.log('⚠️ Server backend unavailable, switching to local backend');
+      console.log('⚠️ Using local backend');
       this.useLocalBackend = true;
     }
     
@@ -66,67 +73,47 @@ export class WorkflowTrackerAPI {
     await this.detectBackendMode();
 
     if (this.useLocalBackend) {
-      // Route to local backend methods
       return this.routeToLocalBackend(endpoint, options);
     }
 
-    // Use server backend
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       ...(options.headers as Record<string, string> || {}),
     };
 
     const token = this.getSessionToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    } else {
-      headers['Authorization'] = `Bearer ${publicAnonKey}`;
-    }
+    headers['Authorization'] = token ? `Bearer ${token}` : `Bearer ${publicAnonKey}`;
 
-    let response;
     try {
-      response = await fetch(`${this.baseUrl}${endpoint}`, {
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
         ...options,
         headers,
       });
+
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const textResponse = await response.text();
+        throw new Error(`Non-JSON response: ${textResponse.substring(0, 200)}`);
+      }
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const errorMessage = data.error || `Request failed with status ${response.status}`;
+        if (response.status === 401) {
+          throw new Error('Invalid or expired session');
+        } else if (response.status === 403) {
+          throw new Error('Access denied');
+        } else if (response.status >= 500) {
+          throw new Error('Server temporarily unavailable');
+        }
+        throw new Error(errorMessage);
+      }
+
+      return data;
     } catch (fetchError) {
-      console.log('Network error during request:', fetchError);
       throw new Error(`Network error: ${fetchError instanceof Error ? fetchError.message : String(fetchError)}`);
     }
-
-    // Check if response is actually JSON
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      const textResponse = await response.text();
-      console.log('Non-JSON response received:', textResponse);
-      throw new Error(`Server returned non-JSON response: ${textResponse.substring(0, 200)}`);
-    }
-
-    let data;
-    try {
-      data = await response.json();
-    } catch (parseError) {
-      console.log('JSON parse error:', parseError);
-      throw new Error(`Failed to parse server response`);
-    }
-
-    if (!response.ok) {
-      const errorMessage = data.error || `Request failed with status ${response.status}`;
-      console.log(`Server error (${response.status}):`, errorMessage);
-      
-      // For auth-related errors, provide cleaner error messages
-      if (response.status === 401) {
-        throw new Error('Invalid or expired session');
-      } else if (response.status === 403) {
-        throw new Error('Access denied');
-      } else if (response.status >= 500) {
-        throw new Error('Server is temporarily unavailable');
-      }
-      
-      throw new Error(errorMessage);
-    }
-
-    return data;
   }
 
   private async routeToLocalBackend(endpoint: string, options: RequestInit) {
@@ -137,19 +124,16 @@ export class WorkflowTrackerAPI {
     switch (endpoint) {
       case '/':
         return await localBackend.testConnectivity();
-      
       case '/login':
         if (method === 'POST' && body) {
           return await localBackend.login(body.username, body.password);
         }
         break;
-      
       case '/logout':
         if (method === 'POST') {
           return await localBackend.logout(token || '');
         }
         break;
-      
       case '/progress':
         if (method === 'POST' && body) {
           return await localBackend.saveProgress(token || '', body.tasks);
@@ -159,27 +143,23 @@ export class WorkflowTrackerAPI {
           return await localBackend.resetProgress(token || '');
         }
         break;
-      
       case '/profile':
         if (method === 'GET') {
           return await localBackend.getUserProfile(token || '');
         }
         break;
-      
       case '/admin/all-progress':
         if (method === 'GET') {
           return await localBackend.getAllUsersProgress(token || '');
         }
         break;
-      
       case '/admin/users':
         if (method === 'GET') {
           return await localBackend.getAllUsers(token || '');
         }
         break;
-      
       default:
-        throw new Error(`Unsupported local backend endpoint: ${endpoint}`);
+        throw new Error(`Unsupported endpoint: ${endpoint}`);
     }
     
     throw new Error(`Invalid request: ${method} ${endpoint}`);
@@ -193,9 +173,7 @@ export class WorkflowTrackerAPI {
   }
 
   async logout() {
-    return this.makeRequest('/logout', {
-      method: 'POST',
-    });
+    return this.makeRequest('/logout', { method: 'POST' });
   }
 
   async saveProgress(tasks: any[]) {
@@ -206,35 +184,25 @@ export class WorkflowTrackerAPI {
   }
 
   async loadProgress() {
-    return this.makeRequest('/progress', {
-      method: 'GET',
-    });
+    return this.makeRequest('/progress', { method: 'GET' });
   }
 
   async resetProgress() {
-    return this.makeRequest('/progress', {
-      method: 'DELETE',
-    });
+    return this.makeRequest('/progress', { method: 'DELETE' });
   }
 
   async getProfile() {
-    return this.makeRequest('/profile', {
-      method: 'GET',
-    });
+    return this.makeRequest('/profile', { method: 'GET' });
   }
 
   async healthCheck() {
-    return this.makeRequest('/health', {
-      method: 'GET',
-    });
+    return this.makeRequest('/health', { method: 'GET' });
   }
 
-  // Test basic connectivity
   async testConnectivity() {
     return this.makeRequest('/');
   }
 
-  // Admin methods
   async getAllUsersProgress() {
     return this.makeRequest('/admin/all-progress');
   }
@@ -243,35 +211,36 @@ export class WorkflowTrackerAPI {
     return this.makeRequest('/admin/users');
   }
 
-  // Get current backend mode
   getBackendMode(): string {
     return this.useLocalBackend ? 'Local Storage' : 'Supabase Server';
   }
 
-  // Force refresh backend detection
   refreshBackendDetection() {
     this.backendTested = false;
     this.useLocalBackend = false;
   }
 
-  // Check if we have a session token
   hasSessionToken(): boolean {
     const token = this.getSessionToken();
     return token !== null && token.length > 0;
   }
 
-  // Clear session and reset state
   clearSession() {
-    console.log('Clearing session');
     this.setSessionToken(null);
   }
 }
 
 // Create and export singleton instance
-console.log('🔧 Creating WorkflowTrackerAPI instance...');
-const workflowAPI = new WorkflowTrackerAPI();
-console.log('🔧 WorkflowTrackerAPI instance created:', workflowAPI);
-console.log('🔧 Has getSessionToken method:', typeof workflowAPI.getSessionToken);
+console.log('🔍 Creating WorkflowTrackerAPI instance...');
 
-export const apiClient = workflowAPI;
-console.log('🔧 Exported apiClient:', apiClient);
+let instance: WorkflowTrackerAPI;
+try {
+  instance = new WorkflowTrackerAPI();
+  console.log('✅ WorkflowTrackerAPI instance created successfully');
+} catch (error) {
+  console.error('❌ Failed to create WorkflowTrackerAPI instance:', error);
+  throw error;
+}
+
+export const apiClient = instance;
+console.log('✅ API client exported successfully');

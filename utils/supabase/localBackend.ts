@@ -1,4 +1,6 @@
 // Local backend simulation for when Supabase server is unavailable
+console.log('🔍 LocalBackend.ts - Loading...');
+
 export class LocalBackend {
   private readonly STORAGE_PREFIX = 'workflow_tracker_';
   
@@ -19,6 +21,10 @@ export class LocalBackend {
       isAdmin: false
     }
   };
+
+  constructor() {
+    console.log('🔍 LocalBackend - Constructor completed');
+  }
 
   private getStorageKey(key: string): string {
     return `${this.STORAGE_PREFIX}${key}`;
@@ -59,7 +65,7 @@ export class LocalBackend {
   }
 
   async login(username: string, password: string) {
-    await new Promise(resolve => setTimeout(resolve, 100)); // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     if (!username || !password) {
       throw new Error("Username and password are required");
@@ -71,17 +77,15 @@ export class LocalBackend {
       throw new Error("Invalid username or password");
     }
 
-    // Create a simple session token
     const sessionToken = `local_session_${user.userId}_${Date.now()}`;
     
-    // Store session in localStorage with expiration
     this.setItem(`session_${sessionToken}`, {
       userId: user.userId,
       username: user.username,
       fullName: user.fullName,
       isAdmin: user.isAdmin || false,
       loginTime: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
     });
 
     return {
@@ -115,7 +119,6 @@ export class LocalBackend {
         return null;
       }
       
-      // Check if session is expired
       if (new Date() > new Date(session.expiresAt)) {
         this.removeItem(`session_${sessionToken}`);
         return null;
@@ -159,7 +162,6 @@ export class LocalBackend {
       throw new Error("Tasks data is required");
     }
 
-    // Save tasks progress to localStorage with user ID as key
     this.setItem(`user_progress_${session.userId}`, {
       tasks,
       lastUpdated: new Date().toISOString(),
@@ -178,7 +180,6 @@ export class LocalBackend {
       throw new Error("Invalid or expired session");
     }
 
-    // Get tasks progress from localStorage
     const progress = this.getItem(`user_progress_${session.userId}`);
 
     if (!progress) {
@@ -199,7 +200,6 @@ export class LocalBackend {
       throw new Error("Invalid or expired session");
     }
 
-    // Delete progress from localStorage
     this.removeItem(`user_progress_${session.userId}`);
 
     return { message: "Progress reset successfully" };
@@ -213,7 +213,6 @@ export class LocalBackend {
       throw new Error("Invalid or expired session");
     }
 
-    // Check if user is admin
     const userKey = Object.keys(this.INTERNAL_USERS).find(key => 
       this.INTERNAL_USERS[key as keyof typeof this.INTERNAL_USERS].userId === session.userId
     );
@@ -223,16 +222,13 @@ export class LocalBackend {
       throw new Error("Access denied. Admin privileges required.");
     }
 
-    // Get all progress data from localStorage
     const allUsersProgress: any[] = [];
     
-    // Check each user for progress data
     Object.values(this.INTERNAL_USERS).forEach(userInfo => {
-      if (!userInfo.isAdmin) { // Don't include admin in the list
+      if (!userInfo.isAdmin) {
         const progressData = this.getItem(`user_progress_${userInfo.userId}`);
         
         if (progressData) {
-          // Calculate progress stats
           const tasks = progressData.tasks || [];
           let totalCheckboxes = 0;
           let completedCheckboxes = 0;
@@ -247,7 +243,6 @@ export class LocalBackend {
             });
           });
           
-          // Count completed stages
           if (tasks.length > 0) {
             [1, 2, 3, 4].forEach(stage => {
               const allStageTasksCompleted = tasks.every((task: any) => {
@@ -276,7 +271,6 @@ export class LocalBackend {
             tasks: progressData.tasks
           });
         } else {
-          // Include users with no progress
           allUsersProgress.push({
             userId: userInfo.userId,
             username: userInfo.username,
@@ -305,7 +299,6 @@ export class LocalBackend {
       throw new Error("Invalid or expired session");
     }
 
-    // Check if user is admin
     const userKey = Object.keys(this.INTERNAL_USERS).find(key => 
       this.INTERNAL_USERS[key as keyof typeof this.INTERNAL_USERS].userId === session.userId
     );
@@ -316,7 +309,7 @@ export class LocalBackend {
     }
 
     const users = Object.values(this.INTERNAL_USERS)
-      .filter(u => !u.isAdmin) // Don't include admin in the list
+      .filter(u => !u.isAdmin)
       .map(u => ({
         userId: u.userId,
         username: u.username,
@@ -327,4 +320,6 @@ export class LocalBackend {
   }
 }
 
+console.log('🔍 LocalBackend - Creating instance...');
 export const localBackend = new LocalBackend();
+console.log('✅ LocalBackend - Instance created successfully');
