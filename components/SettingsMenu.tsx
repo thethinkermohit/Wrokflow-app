@@ -1,4 +1,4 @@
-import { Download, RefreshCw, X } from "lucide-react";
+import { Download, RefreshCw, X, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
 import { Task } from "./constants/taskData";
 import { useEffect, useRef } from 'react';
@@ -83,8 +83,14 @@ export function SettingsMenu({ tasks, isOpen, onClose, onLogout, onExportAndRefr
   };
 
   const handleLogout = () => {
-    onLogout();
-    onClose(); // Close menu when logging out
+    const confirmLogout = window.confirm(
+      'Are you sure you want to logout? This will clear all progress and return to the login screen.'
+    );
+    
+    if (confirmLogout) {
+      onLogout();
+      onClose(); // Close menu when logging out
+    }
   };
 
   if (!isOpen) return null;
@@ -131,7 +137,21 @@ export function SettingsMenu({ tasks, isOpen, onClose, onLogout, onExportAndRefr
           {/* Header */}
           <div className="mb-6">
             <h2 className="text-xl font-bold text-gray-900">Settings</h2>
-            <p className="text-sm text-gray-600">Export reports and manage your account</p>
+            <p className="text-sm text-gray-600">Export reports and manage your session</p>
+            
+            {/* System Status */}
+            <div className="mt-3 p-3 bg-green-50 rounded-lg border border-green-200">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <p className="text-sm font-medium text-green-900">
+                  System Access Granted
+                </p>
+              </div>
+              <p className="text-xs text-green-700 mt-1">
+                Authenticated and ready to use
+              </p>
+            </div>
+            
             <div className="mt-2 text-xs text-blue-600 bg-blue-50 px-3 py-1 rounded-full inline-block">
               Local storage - progress saved on device
             </div>
@@ -169,10 +189,10 @@ export function SettingsMenu({ tasks, isOpen, onClose, onLogout, onExportAndRefr
               className="w-full flex items-center justify-center gap-3 text-red-600 border-red-200 hover:bg-red-50"
               size="lg"
             >
-              <RefreshCw className="w-4 h-4" />
+              <LogOut className="w-4 h-4" />
               <div className="text-left">
-                <div className="font-semibold">Reset Progress</div>
-                <div className="text-xs text-gray-600">Clear all tasks</div>
+                <div className="font-semibold">Logout & Reset</div>
+                <div className="text-xs text-gray-600">Clear all data & return to login</div>
               </div>
             </Button>
           </div>
